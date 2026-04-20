@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Filter Data Transaksi | Akurat & Rapi + Salin</title>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f4f8fe 0%, #eef2f8 100%);
+            padding: 2rem 1.5rem;
+            color: #1a2c3e;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e466e, #0f2c44);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header h1 i {
+            background: none;
+            color: #2c7da0;
+        }
+
+        .sub {
+            color: #2c5a7a;
+            margin-top: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .data-input-card {
+            background: white;
+            border-radius: 28px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            border: 1px solid #e2edf5;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1f5068;
+            border-left: 4px solid #2c7da0;
+            padding-left: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.8rem;
+            border: 1px solid #cfdfed;
+            border-radius: 20px;
+            background: #fafcff;
+            resize: vertical;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: #2c7da0;
+            box-shadow: 0 0 0 3px rgba(44,125,160,0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 1rem;
+            justify-content: flex-end;
+        }
+
+        button {
+            background: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 40px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #cbdde9;
+            font-size: 0.85rem;
+        }
+
+        .btn-primary {
+            background: #1f5e7e;
+            border-color: #1f5e7e;
+            color: white;
+            box-shadow: 0 4px 8px rgba(31,94,126,0.15);
+        }
+
+        .btn-primary:hover {
+            background: #144a64;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline:hover {
+            background: #eef4fa;
+            border-color: #2c7da0;
+        }
+
+        .filter-bar {
+            background: white;
+            border-radius: 60px;
+            padding: 0.5rem 1.2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border: 1px solid #e2edf5;
+        }
+
+        .filter-search {
+            flex: 3;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafd;
+            padding: 6px 18px;
+            border-radius: 40px;
+            border: 1px solid #dce8f0;
+        }
+
+        .filter-search input {
+            border: none;
+            background: transparent;
+            padding: 10px 0;
+            width: 100%;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .filter-stats {
+            font-size: 0.85rem;
+            background: #eef2f7;
+            padding: 6px 16px;
+            border-radius: 40px;
+            color: #1e4a6e;
+            font-weight: 500;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .transaction-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.3rem 1.5rem;
+            box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.12);
+            transition: all 0.25s ease;
+            border: 1px solid #e9f0f5;
+            position: relative;
+        }
+
+        .transaction-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.15);
+            border-color: #cde3ef;
+        }
+
+        .info-line {
+            margin-bottom: 14px;
+            line-height: 1.45;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            font-size: 0.95rem;
+        }
+
+        .info-label {
+            font-weight: 700;
+            color: #2c5a7a;
+            min-width: 125px;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #1e2f3c;
+            font-weight: 500;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .nominal-value {
+            color: #1b6b4c;
+            font-weight: 700;
+        }
+
+        .ref-value {
+            font-family: monospace;
+            background: #f3f9ff;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 3rem;
+            background: white;
+            border-radius: 40px;
+            color: #6f8faa;
+            font-weight: 500;
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            margin-top: 2.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #5b7e9a;
+        }
+
+        /* Tombol salin pada setiap card */
+        .copy-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #f0f6fc;
+            border: none;
+            border-radius: 30px;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #2c7da0;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: none;
+            border: 1px solid #d4e2ed;
+        }
+
+        .copy-btn:hover {
+            background: #2c7da0;
+            color: white;
+            border-color: #2c7da0;
+        }
+
+        .copy-btn i {
+            font-size: 0.7rem;
+        }
+
+        /* Toast notification */
+        .toast-notify {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1f5e7e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .toast-notify.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 1rem; }
+            .filter-bar { border-radius: 30px; flex-direction: column; align-items: stretch; }
+            .info-label { min-width: 110px; }
+            .copy-btn { padding: 4px 10px; font-size: 0.65rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-filter"></i> Filter Data Transaksi</h1>
+        <div class="sub">Akurat & rapi | Filter banyak data sekaligus</div>
+    </div>
+
+    <div class="data-input-card">
+        <div class="card-title">
+            <i class="fas fa-database"></i> 
+            <span>Paste data mentah (format TAB-separated)</span>
+        </div>
+        <textarea id="rawDataInput" rows="6" placeholder="Contoh:&#10;3		robert141414	Roberto	1640003722545	MANDIRI	WTTTO-MW141644	019daccf-1326-735d-ab8a-0c6f422b7c46	2026-04-21 04:32:25	-	100,000.00	wait for payment	-"></textarea>
+        <div class="btn-group">
+            <button id="loadSampleBtn" class="btn-outline"><i class="fas fa-file-alt"></i> Muat Contoh</button>
+            <button id="processDataBtn" class="btn-primary"><i class="fas fa-magic"></i> Proses & Tampilkan</button>
+            <button id="clearDataBtn" class="btn-outline"><i class="fas fa-trash-alt"></i> Hapus Semua</button>
+        </div>
+        <div style="font-size: 0.7rem; margin-top: 12px; background:#f0f5fa; padding: 8px 12px; border-radius: 20px;">
+            <i class="fas fa-info-circle"></i> Format: [no] [TAB] [TAB] [user_id] [TAB] [nama] [TAB] [norek] [TAB] [bank] [TAB] [ref_no] ... [TAB] [nominal] ... 
+        </div>
+    </div>
+
+    <div class="filter-bar">
+        <div class="filter-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchFilter" placeholder="Cari user id, nama, bank, atau reference..." autocomplete="off">
+        </div>
+        <div class="filter-stats">
+            <i class="fas fa-chart-simple"></i> <span id="totalCount">0</span> transaksi
+        </div>
+        <button id="resetFilterBtn" class="btn-outline" style="padding: 6px 18px;"><i class="fas fa-undo-alt"></i> Reset</button>
+    </div>
+
+    <div id="resultsGrid" class="data-grid">
+        <div class="empty-message"><i class="fas fa-arrow-up"></i> Masukkan data lalu tekan Proses</div>
+    </div>
+    <footer>
+        <i class="fas fa-check-circle"></i> Format tampilan: User id, Nama rekening, Nomor rekening (norek - BANK), Nominal (Rp.xxx), Reference No
+    </footer>
+</div>
+
+<!-- Toast notifikasi -->
+<div id="copyToast" class="toast-notify"><i class="fas fa-check-circle"></i> Tersalin ke clipboard!</div>
+
+<script>
+    // ========== PARSER YANG AKURAT UNTUK FORMAT TAB ==========
+    // Contoh baris mentah (tab sebagai pemisah):
+    // "3		robert141414	Roberto	1640003722545	MANDIRI	WTTTO-MW141644	019daccf-1326-735d-ab8a-0c6f422b7c46	2026-04-21 04:32:25	-	100,000.00	wait for payment	-"
+    // Index setelah split('\t'):
+    // [0] = "3"
+    // [1] = "" (kosong)
+    // [2] = "robert141414"   <- user_id
+    // [3] = "Roberto"        <- nama rekening
+    // [4] = "1640003722545"  <- nomor rekening
+    // [5] = "MANDIRI"        <- bank
+    // [6] = "WTTTO-MW141644" <- reference no
+    // [7] = "019daccf-..."   <- uuid (skip)
+    // [8] = "2026-04-21 04:32:25"
+    // [9] = "-"
+    // [10] = "100,000.00"    <- nominal
+    // [11] = "wait for payment"
+    // [12] = "-"
+    
+    function parseLineToTransaction(line) {
+        if (!line || !line.trim()) return null;
+        
+        // Split by tab character
+        let parts = line.split('\t');
+        
+        // Jika tidak ada tab, coba split dengan whitespace (fallback)
+        if (parts.length < 3) {
+            parts = line.trim().split(/\s+/);
+        }
+        
+        if (parts.length < 8) {
+            return null;
+        }
+        
+        // Ambil berdasarkan indeks tetap dari format contoh
+        let user_id = parts[2] ? parts[2].trim() : "";
+        let nama_rekening = parts[3] ? parts[3].trim() : "";
+        let nomor_rekening = parts[4] ? parts[4].trim() : "";
+        let bank = parts[5] ? parts[5].trim() : "";
+        let ref_no = parts[6] ? parts[6].trim() : "";
+        
+        // Nominal biasanya di indeks ke-10
+        let nominal_raw = "";
+        if (parts.length > 10) {
+            nominal_raw = parts[10] ? parts[10].trim() : "";
+        } else if (parts.length > 9) {
+            nominal_raw = parts[9] ? parts[9].trim() : "";
+        } else {
+            nominal_raw = "0";
+        }
+        
+        // Jika user_id kosong (fallback)
+        if (!user_id && parts.length > 1) {
+            for (let i = 0; i < parts.length; i++) {
+                let p = parts[i];
+                if (p && p.length > 3 && /[a-zA-Z0-9]/.test(p) && !p.match(/^\d+$/) && !user_id) {
+                    user_id = p.trim();
+                }
+                if (p && p.length > 2 && /[A-Za-z\s]/.test(p) && !nama_rekening && p !== user_id) {
+                    nama_rekening = p.trim();
+                }
+                if (p && /^\d{10,}$/.test(p) && !nomor_rekening) {
+                    nomor_rekening = p.trim();
+                }
+                if (p && (p === "MANDIRI" || p === "BCA" || p === "BRI" || p === "BNI" || p === "CIMB" || p === "PERMATA") && !bank) {
+                    bank = p.trim();
+                }
+            }
+        }
+        
+        // Bersihkan nominal
+        let nominal_clean = 0;
+        if (nominal_raw) {
+            let cleaned = nominal_raw.replace(/,/g, '');
+            cleaned = cleaned.replace(/[^0-9.-]/g, '');
+            nominal_clean = parseFloat(cleaned);
+            if (isNaN(nominal_clean)) nominal_clean = 0;
+        }
+        
+        // Format Nomor rekening: "1640003722545 - MANDIRI"
+        let norek_formatted = "";
+        if (nomor_rekening && bank) {
+            norek_formatted = `${nomor_rekening} - ${bank}`;
+        } else if (nomor_rekening) {
+            norek_formatted = nomor_rekening;
+        } else if (bank) {
+            norek_formatted = bank;
+        } else {
+            norek_formatted = "-";
+        }
+        
+        // Format nominal: "Rp.100,000"
+        let nominal_formatted = formatRupiahCompact(nominal_clean);
+        
+        return {
+            user_id: user_id || "-",
+            nama: nama_rekening || "-",
+            norek_bank: norek_formatted,
+            ref_no: ref_no || "-",
+            nominal_display: nominal_formatted,
+            nominal_raw_value: nominal_clean,
+            bank: bank
+        };
+    }
+    
+    function formatRupiahCompact(angka) {
+        if (angka === 0) return "Rp.0";
+        let bulat = Math.round(angka);
+        let strNumber = bulat.toString();
+        let formatted = strNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return `Rp.${formatted}`;
+    }
+    
+    // ========== STATE & RENDER ==========
+    let transactions = [];
+    
+    // Fungsi untuk membuat teks hasil salinan (format seperti contoh)
+    function getCopyText(tx) {
+        return `User id : ${tx.user_id}\nNama rekening : ${tx.nama}\nNomor rekening : ${tx.norek_bank}\nNominal : ${tx.nominal_display}\nReference No : ${tx.ref_no}`;
+    }
+    
+    // Toast notifikasi
+    function showToast(message) {
+        const toast = document.getElementById('copyToast');
+        toast.textContent = message || '✓ Tersalin ke clipboard!';
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
+    }
+    
+    // Fungsi copy ke clipboard
+    async function copyToClipboard(text, event) {
+        event.stopPropagation();
+        try {
+            await navigator.clipboard.writeText(text);
+            showToast('✓ Data tersalin!');
+        } catch (err) {
+            // Fallback
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            showToast('✓ Data tersalin!');
+        }
+    }
+    
+    function renderData(filterKeyword = "") {
+        const grid = document.getElementById("resultsGrid");
+        const totalSpan = document.getElementById("totalCount");
+        
+        let filtered = [...transactions];
+        if (filterKeyword.trim() !== "") {
+            const kw = filterKeyword.trim().toLowerCase();
+            filtered = filtered.filter(tx => 
+                tx.user_id.toLowerCase().includes(kw) ||
+                tx.nama.toLowerCase().includes(kw) ||
+                (tx.bank && tx.bank.toLowerCase().includes(kw)) ||
+                tx.ref_no.toLowerCase().includes(kw) ||
+                tx.norek_bank.toLowerCase().includes(kw)
+            );
+        }
+        
+        totalSpan.innerText = filtered.length;
+        
+        if (filtered.length === 0) {
+            grid.innerHTML = `<div class="empty-message"><i class="fas fa-inbox"></i> Tidak ada transaksi yang cocok</div>`;
+            return;
+        }
+        
+        let html = "";
+        for (let i = 0; i < filtered.length; i++) {
+            const tx = filtered[i];
+            const copyText = getCopyText(tx);
+            html += `
+                <div class="transaction-card" data-card-index="${i}">
+                    <button class="copy-btn" data-copy-text="${escapeHtmlAttr(copyText)}">
+                        <i class="fas fa-copy"></i> Salin
+                    </button>
+                    <div class="info-line">
+                        <div class="info-label">User id :</div>
+                        <div class="info-value">${escapeHtml(tx.user_id)}</div>
+                    </div>
+                    <div class="info-line">
+                        <div class="info-label">Nama rekening :</div>
+                        <div class="info-value">${escapeHtml(tx.nama)}</div>
+                    </div>
+                    <div class="info-line">
+                        <div class="info-label">Nomor rekening :</div>
+                        <div class="info-value">${escapeHtml(tx.norek_bank)}</div>
+                    </div>
+                    <div class="info-line">
+                        <div class="info-label">Nominal :</div>
+                        <div class="info-value nominal-value">${tx.nominal_display}</div>
+                    </div>
+                    <div class="info-line">
+                        <div class="info-label">Reference No :</div>
+                        <div class="info-value ref-value">${escapeHtml(tx.ref_no)}</div>
+                    </div>
+                </div>
+            `;
+        }
+        grid.innerHTML = html;
+        
+        // Pasang event listener untuk semua tombol salin
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const textToCopy = btn.getAttribute('data-copy-text');
+                if (textToCopy) {
+                    try {
+                        await navigator.clipboard.writeText(textToCopy);
+                        showToast('✓ Data tersalin!');
+                    } catch (err) {
+                        // Fallback
+                        const textarea = document.createElement('textarea');
+                        textarea.value = textToCopy;
+                        document.body.appendChild(textarea);
+                        textarea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textarea);
+                        showToast('✓ Data tersalin!');
+                    }
+                }
+            });
+        });
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function escapeHtmlAttr(str) {
+        if (!str) return "";
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+    
+    function processDataFromTextarea() {
+        const rawText = document.getElementById("rawDataInput").value;
+        if (!rawText.trim()) {
+            transactions = [];
+            renderData("");
+            document.getElementById("resultsGrid").innerHTML = `<div class="empty-message"><i class="fas fa-arrow-up"></i> Data kosong, silakan paste data</div>`;
+            return;
+        }
+        
+        const lines = rawText.split(/\r?\n/);
+        const parsedList = [];
+        for (let line of lines) {
+            if (line.trim() === "") continue;
+            const tx = parseLineToTransaction(line);
+            if (tx && (tx.user_id !== "-" || tx.nama !== "-" || tx.ref_no !== "-")) {
+                parsedList.push(tx);
+            }
+        }
+        
+        if (parsedList.length === 0 && rawText.trim() !== "") {
+            const fallback = parseLineToTransaction(rawText);
+            if (fallback && fallback.user_id !== "-") {
+                parsedList.push(fallback);
+            }
+        }
+        
+        transactions = parsedList;
+        const searchInput = document.getElementById("searchFilter");
+        renderData(searchInput.value);
+    }
+    
+    function loadSample() {
+        const sample = `3		robert141414	Roberto	1640003722545	MANDIRI	WTTTO-MW141644	019daccf-1326-735d-ab8a-0c6f422b7c46	2026-04-21 04:32:25	-	100,000.00	wait for payment	-
+4		damar887	jajang toto	1770021889024	MANDIRI	WTTTO-MW141641	abc-def-123	2026-04-21 05:00:00	-	201,000	wait for payment	-
+5		ramadana12vip	Cahya indra ramadana	1350021716129	MANDIRI	WTTTO-MW141643	xyz-789	2026-04-21 06:00:00	-	50,000.00	wait for payment	-`;
+        document.getElementById("rawDataInput").value = sample;
+        processDataFromTextarea();
+    }
+    
+    function clearAll() {
+        document.getElementById("rawDataInput").value = "";
+        transactions = [];
+        document.getElementById("searchFilter").value = "";
+        renderData("");
+        document.getElementById("resultsGrid").innerHTML = `<div class="empty-message"><i class="fas fa-arrow-up"></i> Masukkan data lalu tekan Proses</div>`;
+    }
+    
+    // Event listeners
+    document.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("processDataBtn").addEventListener("click", processDataFromTextarea);
+        document.getElementById("loadSampleBtn").addEventListener("click", loadSample);
+        document.getElementById("clearDataBtn").addEventListener("click", clearAll);
+        document.getElementById("resetFilterBtn").addEventListener("click", () => {
+            document.getElementById("searchFilter").value = "";
+            renderData("");
+        });
+        document.getElementById("searchFilter").addEventListener("input", (e) => {
+            renderData(e.target.value);
+        });
+        
+        loadSample();
+    });
+</script>
+</body>
+</html>
